@@ -28,7 +28,7 @@ class FamilysearchApi
     false
   end
 
-  def self.query_tree(session_id, pid = nil)
+  def self.query_tree(session_id, tree, pid = nil)
     begin
       url = "https://"+api_url+PEDIGREE_URL
       unless pid.nil?
@@ -61,10 +61,10 @@ class FamilysearchApi
               name = elem.text.to_s
             end
           end
-          fsp = Person.new
+          fsp = tree.people.build
           fsp.name = name
           if father_id != ""
-            father = Person.new
+            father = tree.people.build
             father.save
             #father_fs_id = PersonFamilySearchIdentifier.new
             #father_fs_id.family_search_id = father_id
@@ -73,7 +73,7 @@ class FamilysearchApi
             fsp.father_id = father.id
           end
           if mother_id != ""
-            mother = Person.new
+            mother = tree.people.build
             mother.save
             #mother_fs_id = PersonFamilySearchIdentifier.new
             #mother_fs_id.family_search_id = mother_id
@@ -86,6 +86,7 @@ class FamilysearchApi
         end
       end
     rescue => e
+    abort(e.message)
     end
     nil
   end
