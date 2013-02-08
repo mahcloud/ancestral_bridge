@@ -66,18 +66,18 @@ class FamilysearchApi
           if father_id != ""
             father = Person.new
             father.save
-            father_fs_id = PersonFamilySearchIdentifier.new
-            father_fs_id.family_search_id = father_id
-            father_fs_id.save
+            #father_fs_id = PersonFamilySearchIdentifier.new
+            #father_fs_id.family_search_id = father_id
+            #father_fs_id.save
             #father_fs_id = father.person_family_search_identifiers.build({:family_search_id => father_id})
             fsp.father_id = father.id
           end
           if mother_id != ""
             mother = Person.new
             mother.save
-            mother_fs_id = PersonFamilySearchIdentifier.new
-            mother_fs_id.family_search_id = mother_id
-            mother_fs_id.save
+            #mother_fs_id = PersonFamilySearchIdentifier.new
+            #mother_fs_id.family_search_id = mother_id
+            #mother_fs_id.save
             #	mother_fs_id = mother.person_family_search_identifier.build(mother_id)
             fsp.mother_id = mother.id
           end

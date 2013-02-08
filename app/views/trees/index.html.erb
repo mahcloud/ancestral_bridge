@@ -15,7 +15,11 @@
 <% @trees.each do |tree| %>
   <tr>
     <td><%= tree.name %></td>
-    <td><%= tree.person_id %></td>
+    <td><%= if tree.getRoot().nil?
+              link_to 'Sync', sync_tree_path(tree)
+            else
+              tree.getRoot().name;
+            end %></td>
     <td><%= tree.people.length %></td>
     <td><%= link_to 'Show', tree %></td>
     <td><%= link_to 'Edit', edit_tree_path(tree) %></td>

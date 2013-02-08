@@ -83,6 +83,18 @@ class TreesController < ApplicationController
     end
   end
 
+  def sync
+    @tree = find_tree(params[:id])
+    if logged_in?
+      fs_account = current_user.familysearch_account
+      unless fs_account.nil?
+        if fs_account.fetch_session_id?
+          @tree = fs_account.fetch_tree()
+        end
+      end
+    end
+  end
+  
   protected
 
   def find_tree(id)

@@ -11,6 +11,7 @@ AncestralBridge::Application.routes.draw do
   match '/connect' => "home#connect", :as => "connect"
   match '/link_fsa' => "familysearch_accounts#new", :as => "link_fsa"
   match '/test_fsa_connection' => "familysearch_accounts#test_connection", :as => "test_fsa_connection"
+  match '/trees/:id/sync' => "trees#sync", :as => "sync_tree"
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
