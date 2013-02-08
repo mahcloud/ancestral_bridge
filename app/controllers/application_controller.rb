@@ -29,4 +29,23 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :require_login
+
+  def has_fsa?
+    if current_user.familysearch_account.nil?
+      return false
+    else
+      return true
+    end
+  end
+
+  helper_method :has_fsa?
+
+  def fsa_connected?
+    if logged_in? && has_fsa?
+      return current_user.familysearch_account.fetch_session_id?
+    end
+    return false
+  end
+
+  helper_method :fsa_connected?
 end

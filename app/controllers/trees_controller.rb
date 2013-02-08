@@ -89,7 +89,6 @@ class TreesController < ApplicationController
     begin
       return current_user.trees.find(id)
     rescue ActiveRecord::RecordNotFound
-      #flash[:error] = "Couldn't find tree with id '"+params[:id]+"'."
       redirect_to trees_path, notice: "Couldn't find tree with id '"+params[:id]+"'."
     end
   end

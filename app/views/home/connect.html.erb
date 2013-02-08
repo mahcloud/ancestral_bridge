@@ -1,0 +1,8 @@
+<%=
+  unless fsa_connected?
+    link_to "Not Connected", link_fsa_path
+  else
+    "Connected"
+  end
+%>
+to FamilySearch.org

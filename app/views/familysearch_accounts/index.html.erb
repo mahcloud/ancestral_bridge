@@ -1,0 +1,31 @@
+<h1>Listing familysearch_accounts</h1>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>Username</th>
+    <th>Password</th>
+    <th>Session</th>
+    <th>Session update</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @familysearch_accounts.each do |familysearch_account| %>
+  <tr>
+    <td><%= familysearch_account.user_id %></td>
+    <td><%= familysearch_account.username %></td>
+    <td><%= familysearch_account.password %></td>
+    <td><%= familysearch_account.session_id %></td>
+    <td><%= familysearch_account.session_update %></td>
+    <td><%= link_to 'Show', familysearch_account %></td>
+    <td><%= link_to 'Edit', edit_familysearch_account_path(familysearch_account) %></td>
+    <td><%= link_to 'Destroy', familysearch_account, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Familysearch account', new_familysearch_account_path %>

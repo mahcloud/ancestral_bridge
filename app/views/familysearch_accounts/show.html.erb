@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>User:</b>
+  <%= @familysearch_account.user_id %>
+</p>
+
+<p>
+  <b>Username:</b>
+  <%= @familysearch_account.username %>
+</p>
+
+<p>
+  <b>Password:</b>
+  <%= @familysearch_account.password %>
+</p>
+
+<p>
+  <b>Session:</b>
+  <%= @familysearch_account.session_id %>
+</p>
+
+<p>
+  <b>Session update:</b>
+  <%= @familysearch_account.session_update %>
+</p>
+
+
+<%= link_to 'Edit', edit_familysearch_account_path(@familysearch_account) %> |
+<%= link_to 'Back', familysearch_accounts_path %>

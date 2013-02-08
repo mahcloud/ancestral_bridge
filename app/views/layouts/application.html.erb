@@ -11,6 +11,7 @@
     <%= link_to "Home", root_path %>
     <% if logged_in? %>
       <%= link_to "Trees", trees_path %>
+      <%= link_to "Connect", connect_path %>
       <%= link_to "logout", session_path, :method => :delete %>
     <% else %>
       <%= link_to "register", register_path %>

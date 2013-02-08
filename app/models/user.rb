@@ -18,7 +18,8 @@ class User < ActiveRecord::Base
     :if => :password_required?
 
   has_many :trees
-  
+  has_one :familysearch_account
+
   before_save :encrypt_new_password
 
   def self.authenticate(email, password)

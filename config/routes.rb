@@ -2,11 +2,15 @@ AncestralBridge::Application.routes.draw do
   get "home/index"
   root :to => "home#index"
   resources :users
-  resources :trees
   resource :session
+  resource :familysearch_accounts
+  resources :trees
   match '/register' => "users#new", :as => "register"
   match '/login' => "sessions#new", :as => "login"
   match '/logout' => "sessions#destroy", :as => "logout"
+  match '/connect' => "home#connect", :as => "connect"
+  match '/link_fsa' => "familysearch_accounts#new", :as => "link_fsa"
+  match '/test_fsa_connection' => "familysearch_accounts#test_connection", :as => "test_fsa_connection"
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
