@@ -1,6 +1,11 @@
 AncestralBridge::Application.routes.draw do
   get "home/index"
   root :to => "home#index"
+  resources :users
+  resource :session
+  match '/register' => "users#new", :as => "register"
+  match '/login' => "sessions#new", :as => "login"
+  match '/logout' => "sessions#destroy", :as => "logout"
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
