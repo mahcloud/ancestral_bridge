@@ -1,8 +1,10 @@
 class TreesController < ApplicationController
+  before_filter :require_login
+
   # GET /trees
   # GET /trees.json
   def index
-    @trees = Tree.all
+    @trees = current_user.trees.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -13,7 +15,7 @@ class TreesController < ApplicationController
   # GET /trees/1
   # GET /trees/1.json
   def show
-    @tree = Tree.find(params[:id])
+    @tree = find_tree(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -34,7 +36,7 @@ class TreesController < ApplicationController
 
   # GET /trees/1/edit
   def edit
-    @tree = Tree.find(params[:id])
+    @tree = find_tree(params[:id])
   end
 
   # POST /trees
@@ -56,7 +58,7 @@ class TreesController < ApplicationController
   # PUT /trees/1
   # PUT /trees/1.json
   def update
-    @tree = Tree.find(params[:id])
+    @tree = find_tree(params[:id])
 
     respond_to do |format|
       if @tree.update_attributes(params[:tree])
@@ -72,12 +74,23 @@ class TreesController < ApplicationController
   # DELETE /trees/1
   # DELETE /trees/1.json
   def destroy
-    @tree = Tree.find(params[:id])
+    @tree = find_tree(params[:id])
     @tree.destroy
 
     respond_to do |format|
       format.html { redirect_to trees_url }
       format.json { head :no_content }
+    end
+  end
+
+  protected
+
+  def find_tree(id)
+    begin
+      return current_user.trees.find(id)
+    rescue ActiveRecord::RecordNotFound
+      #flash[:error] = "Couldn't find tree with id '"+params[:id]+"'."
+      redirect_to trees_path, notice: "Couldn't find tree with id '"+params[:id]+"'."
     end
   end
 end
