@@ -2,6 +2,7 @@ AncestralBridge::Application.routes.draw do
   get "home/index"
   root :to => "home#index"
   resources :users
+  resources :trees
   resource :session
   match '/register' => "users#new", :as => "register"
   match '/login' => "sessions#new", :as => "login"

@@ -17,6 +17,8 @@ class User < ActiveRecord::Base
     :length => { :within => 6..25 },
     :if => :password_required?
 
+  has_many :trees
+  
   before_save :encrypt_new_password
 
   def self.authenticate(email, password)
