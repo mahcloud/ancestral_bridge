@@ -6,6 +6,7 @@
   <tr>
     <th>Name</th>
     <th>Root Person</th>
+    <th>Size</th>
     <th></th>
     <th></th>
     <th></th>
@@ -15,6 +16,7 @@
   <tr>
     <td><%= tree.name %></td>
     <td><%= tree.person_id %></td>
+    <td><%= tree.people.length %></td>
     <td><%= link_to 'Show', tree %></td>
     <td><%= link_to 'Edit', edit_tree_path(tree) %></td>
     <td><%= link_to 'Destroy', tree, method: :delete, data: { confirm: 'Are you sure?' } %></td>

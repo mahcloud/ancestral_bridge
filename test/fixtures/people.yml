@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  tree_id: 1
+  name: MyString
+  father_id: 1
+  mother_id: 1
+  gender: MyString
+
+two:
+  tree_id: 1
+  name: MyString
+  father_id: 1
+  mother_id: 1
+  gender: MyString

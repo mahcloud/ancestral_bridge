@@ -11,7 +11,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130208154623) do
+ActiveRecord::Schema.define(:version => 20130208162536) do
+
+  create_table "people", :force => true do |t|
+    t.integer  "tree_id"
+    t.string   "name"
+    t.integer  "father_id"
+    t.integer  "mother_id"
+    t.string   "gender"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
