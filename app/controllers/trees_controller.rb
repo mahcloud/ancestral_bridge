@@ -89,7 +89,7 @@ class TreesController < ApplicationController
       fs_account = current_user.familysearch_account
       unless fs_account.nil?
         if fs_account.fetch_session_id?
-          @tree = fs_account.fetch_tree()
+          fs_account.fetch_tree(@tree)
         end
       end
     end

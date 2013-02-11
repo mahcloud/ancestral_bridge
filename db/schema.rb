@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130208163736) do
+ActiveRecord::Schema.define(:version => 20130211040254) do
 
   create_table "familysearch_accounts", :force => true do |t|
     t.integer  "user_id",        :null => false
@@ -21,6 +21,13 @@ ActiveRecord::Schema.define(:version => 20130208163736) do
     t.datetime "session_update"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
+  end
+
+  create_table "familysearch_identifiers", :force => true do |t|
+    t.integer  "person_id"
+    t.string   "fs_identifier"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
   end
 
   create_table "people", :force => true do |t|

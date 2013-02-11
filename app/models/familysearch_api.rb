@@ -61,33 +61,43 @@ class FamilysearchApi
               name = elem.text.to_s
             end
           end
-          fsp = tree.people.build
+          
+          p_fs_id = FamilysearchIdentifier.find_by_fs_identifier(pids[index])
+          if p_fs_id.nil?
+            fsp = tree.people.build
+          else
+            fsp = p_fs_id.person
+          end
           fsp.name = name
           if father_id != ""
             father = tree.people.build
             father.save
-            #father_fs_id = PersonFamilySearchIdentifier.new
-            #father_fs_id.family_search_id = father_id
-            #father_fs_id.save
-            #father_fs_id = father.person_family_search_identifiers.build({:family_search_id => father_id})
             fsp.father_id = father.id
+            father_fs_id = father.familysearch_identifiers.build
+            father_fs_id.fs_identifier = father_id
+            father_fs_id.save
           end
           if mother_id != ""
             mother = tree.people.build
             mother.save
-            #mother_fs_id = PersonFamilySearchIdentifier.new
-            #mother_fs_id.family_search_id = mother_id
-            #mother_fs_id.save
-            #	mother_fs_id = mother.person_family_search_identifier.build(mother_id)
             fsp.mother_id = mother.id
+            mother_fs_id = mother.familysearch_identifiers.build
+            mother_fs_id.fs_identifier = mother_id
+            mother_fs_id.save
           end
-          #fsp.user_id = current_user.id
           fsp.save
+          if p_fs_id.nil?
+            p_fs_id = fsp.familysearch_identifiers.build
+            p_fs_id.fs_identifier = pids[index]
+            p_fs_id.save
+          end
         end
       end
     rescue => e
     abort(e.message)
     end
-    nil
+    if pids.length > 0
+      return pids[0]
+    end
   end
 end
