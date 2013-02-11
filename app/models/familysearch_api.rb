@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'rexml/document'
+require 'pp'
 class FamilysearchApi
   LOGIN_URL = "/identity/v2/login"
   PERSON_URL = "/familytree/v2/person"
@@ -36,11 +37,13 @@ class FamilysearchApi
       end
       xml = RestClient.get url, :params => {:sessionId => session_id}
       if xml.code == 200
+        root_id = ""
         doc = REXML::Document.new(xml)
         elements = REXML::XPath.match(doc.root)
         persons = []
         pids = []
         doc.root.each_recursive do |elem|
+          root_id << elem.attribute('id').to_s if elem.name == "pedigree"
           persons << elem.to_s if elem.name == "person"
           pids << elem.attribute('id').to_s if elem.name == "person"
         end
@@ -62,7 +65,7 @@ class FamilysearchApi
             end
           end
           
-          p_fs_id = FamilysearchIdentifier.find_by_fs_identifier(pids[index])
+          p_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(pids[index])
           if p_fs_id.nil?
             fsp = tree.people.build
           else
@@ -70,20 +73,26 @@ class FamilysearchApi
           end
           fsp.name = name
           if father_id != ""
-            father = tree.people.build
-            father.save
-            fsp.father_id = father.id
-            father_fs_id = father.familysearch_identifiers.build
-            father_fs_id.fs_identifier = father_id
-            father_fs_id.save
+            father_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(father_id)
+            if father_fs_id.nil?
+              father = tree.people.build
+              father.save
+              fsp.father_id = father.id
+              father_fs_id = father.familysearch_identifiers.build
+              father_fs_id.fs_identifier = father_id
+              father_fs_id.save
+            end
           end
           if mother_id != ""
-            mother = tree.people.build
-            mother.save
-            fsp.mother_id = mother.id
-            mother_fs_id = mother.familysearch_identifiers.build
-            mother_fs_id.fs_identifier = mother_id
-            mother_fs_id.save
+            mother_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(mother_id)
+            if mother_fs_id.nil?
+              mother = tree.people.build
+              mother.save
+              fsp.mother_id = mother.id
+              mother_fs_id = mother.familysearch_identifiers.build
+              mother_fs_id.fs_identifier = mother_id
+              mother_fs_id.save
+            end
           end
           fsp.save
           if p_fs_id.nil?
@@ -92,9 +101,13 @@ class FamilysearchApi
             p_fs_id.save
           end
         end
+        p_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(pids[index])
+        if p_fs_id.nil?
+          tree.person = p_fs_id.person
+          tree.save
+        end
       end
     rescue => e
-    abort(e.message)
     end
     if pids.length > 0
       return pids[0]

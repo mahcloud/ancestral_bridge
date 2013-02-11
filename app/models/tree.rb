@@ -4,6 +4,7 @@ class Tree < ActiveRecord::Base
   belongs_to :user
   has_one :person
   has_many :people
+  has_many :familysearch_identifiers, :through => :people
 
   def getRoot
     return person
