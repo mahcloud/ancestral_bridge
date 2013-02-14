@@ -101,16 +101,13 @@ class FamilysearchApi
             p_fs_id.save
           end
         end
-        p_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(pids[index])
-        if p_fs_id.nil?
-          tree.person = p_fs_id.person
+        p_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(root_id)
+        unless p_fs_id.nil?
+          tree.person_id = p_fs_id.person.id
           tree.save
         end
       end
     rescue => e
-    end
-    if pids.length > 0
-      return pids[0]
     end
   end
 end
