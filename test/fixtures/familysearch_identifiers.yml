@@ -2,8 +2,8 @@
 
 one:
   person_id: 1
-  identifier: MyString
+  fs_identifier: MyString
 
 two:
   person_id: 1
-  identifier: MyString
+  fs_identifier: MyString

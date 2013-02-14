@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  : 
-  : 
-  : 
+  name: John 
+  email: test@test.com
+  password: password
 
 two:
-  : 
-  : 
-  : 
+  name: Betty
+  email: fake@test.com
+  password: password

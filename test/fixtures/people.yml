@@ -2,14 +2,14 @@
 
 one:
   tree_id: 1
-  name: MyString
+  name: Betty
   father_id: 1
   mother_id: 1
-  gender: MyString
+  gender: F
 
 two:
   tree_id: 1
-  name: MyString
+  name: John
   father_id: 1
   mother_id: 1
-  gender: MyString
+  gender: M
