@@ -1,12 +1,13 @@
-require 'nokogiri'
-require 'rexml/document'
-require 'pp'
+require 'rubygems'
+require 'ruby-fs-stack'
+require 'logger'
+
 class FamilysearchApi
   LOGIN_URL = "/identity/v2/login"
   PERSON_URL = "/familytree/v2/person"
   PEDIGREE_URL = "/familytree/v2/pedigree"
   PLACE_URL = "/authorities/v1/place"
-  
+
   def self.dev_key
     config = YAML.load_file("#{Rails.root}/config/familysearch.yml")[Rails.env]
     config['web_key']
@@ -17,97 +18,65 @@ class FamilysearchApi
     config['url']
   end
   
-  def self.query_session_id(username, password)
-    begin
-      xml = RestClient.get "https://"+username+":"+password+"@"+api_url+LOGIN_URL, :params => {:key => dev_key}
-      if xml.code == 200
-        f = Nokogiri::XML(xml)
-        return f.xpath('//*[@id]').attr('id').to_s
-      end
-    rescue => e
-    end
-    false
+  def self.check_communicator(username, password)
+    communicator = FsCommunicator.new :domain => 'https://'+api_url, :key => dev_key
+    communicator.identity_v1.authenticate :username => username, :password => password
+    communicator
   end
 
-  def self.query_tree(session_id, tree, pid = nil)
-    begin
-      url = "https://"+api_url+PEDIGREE_URL
-      unless pid.nil?
-        url += "/"+pid
-      end
-      xml = RestClient.get url, :params => {:sessionId => session_id}
-      if xml.code == 200
-        root_id = ""
-        doc = REXML::Document.new(xml)
-        elements = REXML::XPath.match(doc.root)
-        persons = []
-        pids = []
-        doc.root.each_recursive do |elem|
-          root_id << elem.attribute('id').to_s if elem.name == "pedigree"
-          persons << elem.to_s if elem.name == "person"
-          pids << elem.attribute('id').to_s if elem.name == "person"
-        end
-        persons.each_with_index do |person, index|
-          father_id = ""
-          mother_id = ""
-          name = ""
-          doc = REXML::Document.new(person)
-          elements = REXML::XPath.match(doc.root)
-          doc.root.each_recursive do |elem|
-            if elem.name == "parent" && elem.attribute('gender').to_s == "Male"
-              father_id = elem.attribute('id').to_s
-            end
-            if elem.name == "parent" && elem.attribute('gender').to_s == "Female"
-              mother_id = elem.attribute('id').to_s
-            end
-            if elem.name == "fullText"
-              name = elem.text.to_s
-            end
-          end
-          
-          p_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(pids[index])
-          if p_fs_id.nil?
-            fsp = tree.people.build
-          else
-            fsp = p_fs_id.person
-          end
-          fsp.name = name
-          if father_id != ""
-            father_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(father_id)
-            if father_fs_id.nil?
-              father = tree.people.build
-              father.save
-              fsp.father_id = father.id
-              father_fs_id = father.familysearch_identifiers.build
-              father_fs_id.fs_identifier = father_id
-              father_fs_id.save
+  def self.generate_person(tree, fs_id, name = nil, father_id = nil, mother_id = nil)
+    p_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(fs_id)
+    if p_fs_id.nil?
+      person = tree.people.build
+    else
+      person = p_fs_id.person
+    end
+    unless name.nil?
+      person.name = name
+    end
+    unless father_id.nil?
+      person.father_id = father_id
+    end
+    unless mother_id.nil?
+      person.mother_id = mother_id
+    end
+    person.save
+    if p_fs_id.nil?
+      p_fs_id = person.familysearch_identifiers.build
+      p_fs_id.fs_identifier = fs_id
+      p_fs_id.save
+    end
+    person.id
+  end
+
+  def self.fetch_tree(communicator, tree, pid = nil)
+    if pid.nil?
+      tree_result = communicator.familytree_v2.pedigree :me
+      root_id = tree_result.persons[0].id
+    else
+      tree_result = communicator.familytree_v2.pedigree pid
+    end
+    
+    tree_result.persons.each do |person|
+      father_id = nil
+      mother_id = nil
+      unless person.parents.nil?
+        if person.parents.length > 0
+          person.parents[0].parents.each do |parent|
+            if parent.gender == "Male"
+              father_id = generate_person(tree, parent.id)
+            else
+              mother_id = generate_person(tree, parent.id)
             end
           end
-          if mother_id != ""
-            mother_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(mother_id)
-            if mother_fs_id.nil?
-              mother = tree.people.build
-              mother.save
-              fsp.mother_id = mother.id
-              mother_fs_id = mother.familysearch_identifiers.build
-              mother_fs_id.fs_identifier = mother_id
-              mother_fs_id.save
-            end
-          end
-          fsp.save
-          if p_fs_id.nil?
-            p_fs_id = fsp.familysearch_identifiers.build
-            p_fs_id.fs_identifier = pids[index]
-            p_fs_id.save
-          end
-        end
-        p_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(root_id)
-        unless p_fs_id.nil?
-          tree.person_id = p_fs_id.person.id
-          tree.save
         end
       end
-    rescue => e
+      generate_person(tree, person.id,  person.full_name, father_id, mother_id)
+    end
+    p_fs_id = tree.familysearch_identifiers.find_by_fs_identifier(root_id)
+    unless p_fs_id.nil?
+      tree.person_id = p_fs_id.person.id
+      tree.save
     end
   end
 end

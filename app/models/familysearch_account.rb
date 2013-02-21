@@ -26,7 +26,8 @@ class FamilysearchAccount < ActiveRecord::Base
 
   def fetch_tree(tree, pid = nil)
     if fetch_session_id?
-      return FamilysearchApi::query_tree(session_id, tree, pid)
+      communicator = FamilysearchApi::check_communicator(username, password)
+      return FamilysearchApi::fetch_tree(communicator, tree, pid)
     end
     nil
   end

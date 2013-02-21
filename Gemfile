@@ -9,6 +9,9 @@ gem 'mysql2'
 gem 'rest-client'
 gem 'nokogiri'
 
+gem 'ruby-fs-stack'
+gem 'json'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
